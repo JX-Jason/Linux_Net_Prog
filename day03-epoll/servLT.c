@@ -4,7 +4,7 @@
 #include <sys/socket.h>//socklen_t
 #include <arpa/inet.h>//sockaddr_in
 #include <sys/epoll.h>
-#define BUF_SIZE 100
+#define BUF_SIZE 4
 #define EPOLL_SIZE 50
 
 void error_handling(char *message)
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     serv_addr.sin_port = htons(atoi(argv[1]));
 
-    if(bind(servfd,(struct sockaddr*)&serv_addr,sizeof(serv_addr) == -1))
+    if(bind(servfd,(struct sockaddr*)&serv_addr,sizeof(serv_addr)) == -1)
         error_handling("bind error");
     
     if(listen(servfd,5) == -1)
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     epfd = epoll_create(EPOLL_SIZE);
     ep_events = malloc(sizeof(struct epoll_event) * EPOLL_SIZE);
 
-    event.events = EPOLLIN;
+    event.events = EPOLLIN|EPOLLET;
     event.data.fd=servfd;
     epoll_ctl(epfd,EPOLL_CTL_ADD,servfd,&event);
 
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
             puts("epoll_wait() error");
             break;
         }
-
+        puts("return epoll_wait");
         for(int i = 0; i<event_cnt; i++)
         {
             if(ep_events[i].data.fd == servfd)//this fd occur something
