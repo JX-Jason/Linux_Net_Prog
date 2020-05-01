@@ -8,7 +8,7 @@
             "name": "(gdb) 启动",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileDirname}/serverET",
+            "program": "${fileDirname}/server",
             "args": ["9000"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
