@@ -1,0 +1,22 @@
+echo "please input your formula:"
+# 读入表达式
+read a op b
+# 用 if-else 语句判断
+if [ $op = '+' ]
+then 
+echo `expr $a \+ $b`
+elif [ $op = '-' ]
+then 
+echo `expr $a \- $b`
+elif [ $op = 'x'   ]
+then 
+echo `expr $a \* $b`
+elif [ $op = '/' ]
+then
+echo `expr $a / $b`
+else
+echo "operator is wrong ! "
+fi
+exit 0 
+
+

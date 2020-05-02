@@ -1,0 +1,6 @@
+Hello,everyone:
+My name is Wang Zhongjie, a student of Computer Science & Technology in Dalian Maritime University.
+I am fond of embedded system. When i watched the movie "WALL-E", it's so great if i can make a so cute robot like WALL-E!
+So i try to make such a robot step by step:first, i learned how to use the 3D printer to build the body of WALL-E. Second,how to make the robot smarter is a diffcult problem for me: i put a microcontrollerchip into his body to control some step motors,server motors and normal motors.
+It is interesting to do that,finally,someone told me that he should run with an operating system rather than an bare machine.
+So i want to learn how to use the Linux to control him.
