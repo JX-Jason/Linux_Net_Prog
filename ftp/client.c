@@ -2,8 +2,8 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <string.h>
-
-#define BUF_SIZE 30
+#include "clntcmd.h"
+#define BUF_SIZE 1024
  
 void error_handling(char *message)
 {
@@ -39,17 +39,34 @@ int main(int argc,char **argv[])
 	}
 
 	while(1) {
-		fputs("Input message(Q to quit): ",stdout);
+		fputs("Please input cmd(Q to quit): ",stdout);
 		fgets(message, BUF_SIZE, stdin);
 
 		if(!strcmp(message, "q\n") | !strcmp(message, "Q\n")) {
 			break;
 		}
 
-		write(clntfd, message, strlen(message));
-		str_len = read(clntfd, message, BUF_SIZE-1);
-		message[str_len] = 0;
-		printf("Message from server: %s \n", message);
+        if(message[0] == 'p'&& message[1] == 'u'&& message[2] == 't')
+        {
+            if(strlen(message) < 5)
+            {
+                puts("client put error! Usage: put xxx.xxx");
+                break;
+            }
+            else
+            {
+                char filename[strlen(message) - 5]; 
+                strncpy(filename, message + 4, strlen(message) - 5);  
+                ftp_get_put(clntfd, filename);                      
+            }
+            
+
+        }
+
+		// write(clntfd, message, strlen(message));
+		// str_len = read(clntfd, message, BUF_SIZE-1);
+		// message[str_len] = 0;
+		// printf("Message from server: %s \n", message);
 	}
 
     close(clntfd);

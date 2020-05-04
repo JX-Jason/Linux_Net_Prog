@@ -1,11 +1,11 @@
+all: server client
 .PHONY:all
 CXX = gcc
-all = server client
 CFLAGS = -g -std=c99
-server:
-	$(CXX) -o server server.c ls.c $(CFLAGS)
-client:
-	$(CXX) -o client client.c $(CFLAGS)
+server:server.c servcmd.c
+	$(CXX) -o server server.c servcmd.c $(CFLAGS)
+client:client.c clntcmd.c
+	$(CXX) -o client client.c clntcmd.c $(CFLAGS)
 
 clean:
 	rm -rf *.o $(all) 	

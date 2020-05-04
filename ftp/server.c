@@ -6,7 +6,7 @@
 #include <sys/epoll.h>
 #include <fcntl.h>
 #include <errno.h>
-#include "ls.h"
+#include "servcmd.h"
 #define BUF_SIZE 1024
 #define EPOLL_SIZE 50
 
@@ -120,7 +120,6 @@ int main(int argc, char *argv[])
                             strcpy(mdata[0].current_path, dir);
                             ls_do(mdata);
                             strcpy(buf, &(mdata[0].rebuf));
-                            //buf = mdata[0].rebuf;
                             write(ep_events[i].data.fd, buf, sizeof(buf));
                         }
                         
