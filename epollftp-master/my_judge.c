@@ -34,8 +34,8 @@ int ana_cmd(char *cmd){
 char *get_para(char *buf, int n){
   // return substr(buf, n, strlen(buf)-n+1);
   memset(para, 0, sizeof(para));
-  int j=0;
-  for(int i=n; i<strlen(buf); i++)
+  int i,j=0;
+  for(i=n; i<strlen(buf); i++)
     para[j++] = buf[i];
   para[j] = '\0';
 

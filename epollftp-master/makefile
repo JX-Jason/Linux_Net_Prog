@@ -3,9 +3,9 @@ all: server client
 objectser = myserver.o servjudge.o my_judge.o servftp.o error.o my_unp.o
 objectcli = myclient.o clijudge.o my_judge.o cliftp.o error.o my_unp.o
 server:$(objectser)
-	gcc -o server $(objectser)
+	gcc -o server -g $(objectser) -std=c99 
 client:$(objectcli)
-	gcc -o client $(objectcli)
+	gcc -o client -g $(objectcli) -std=c99 
 	rm -rf *.o
 
 # error.o: error.h

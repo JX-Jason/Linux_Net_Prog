@@ -4,12 +4,14 @@
 #include<dirent.h>
 #include<string.h>
 
-#define SENDFILESIZE 1024
-char buf[MAXLINE];
+#define FILEBUFSIZE 1024
+
 char re[MAXLINE];
 DIR *dp;
 struct dirent *entry;
 int n;
+
+
 // int ftp_put_cd(char *para, data *mdata){
 
 //   printf("para = %s\n", para);
@@ -68,134 +70,117 @@ int n;
 //   mdata->indeep = indeep;
 //   return 1;
 // }
-
-int ftp_put_put(char *para, data *mdata)
-{
-  int sockfd = mdata->fd;
-  char *current_path =  mdata->current_path;
   //接收客户端传来的文件
-  memset(re, 0, sizeof(re));
-  char filename[MAXLINE];
-  char filepath[MAXLINE];
-  int filefd;
-  int filesize;
+int put_do(data *mdata)
+{
+	char filename[MAXLINE];
+	char filepath[MAXLINE];
+	int filefd;
+	int filesize;
+	int i,j;
+	memset(filename, 0, sizeof(filename));
 
-  for(int i=strlen(para)-1; i>=0; i--){
-    if(para[i] == '/'){
-      for(int j=0; i<strlen(para); j++)
-        filename[j] = para[++i];
-      break;
-    }
-  }
+	for(i = 4; i<strlen(mdata->rebuf); i++)
+	{
+		if(mdata->rebuf[i] == '\n')
+		{		  
+			break;
+		}
+			
+		else
+		{
+			filename[j++] = mdata->rebuf[i];
+		}        
+	}  
+	
+	strcat(filepath, mdata->current_path);
+	//strcat(filepath, "/");
+	strcat(filepath, filename);
 
-  strcat(filepath, current_path);
-  strcat(filepath, "/");
-  strcat(filepath, filename);
+		
+	//调用O_TRUNC 新上传文件会覆盖旧文件
+	if( (filefd = open("tmp.txt", O_WRONLY|O_CREAT|O_TRUNC, 0777)) < 0)
+	{
+		return err("put_do open file error\n");
+	}
+	else
+	{
+		write(filefd, (mdata->rebuf) + i + 1, FILEBUFSIZE - i - 1);
 
-  // printf("para = %s\n", para);
-
-  //调用O_TRUNC 新上传文件会覆盖旧文件
-  if( (filefd = open(filepath, O_WRONLY|O_CREAT|O_TRUNC, 0777)) < 0){
-    return err("ftp_put_put open file error\n");
-  }
-  else{
-    // printf("create file success\n");
-    // printf("ready 4 read\n");
-    while(read(sockfd, buf, SENDFILESIZE) >= 0){
-      memcpy(&filesize, buf, sizeof(int));
-
-      printf("filesize = %d\n", filesize);
-
-      if( (write(filefd, buf+sizeof(int), filesize)) < 0){
-        close(filefd);
-        return err("ftp_put_put write to file error\n");
-      }
-
-      //文件接收完毕
-      if(filesize < (SENDFILESIZE-sizeof(int)))
-        break;
-    }
-  }
-  close(filefd);
-  return 1;
+		while (read(mdata->fd, mdata->rebuf, FILEBUFSIZE) >= 0)
+		{
+		if( (write(filefd, mdata->rebuf, FILEBUFSIZE)) < 0)
+		{
+			close(filefd);
+			return err("put_do write to file error\n");
+		}
+		} 
+	}
+	close(filefd);
+	return 1;
 
 }
+//向客户端传送文件
+int get_do(data *mdata)
+{  
+	char send[FILEBUFSIZE];
+	int filefd;
+	int sendsize, len;
+	char filepath[MAXLINE];
+	char filename[MAXLINE];
+	memset(filename, 0, sizeof(filename));
+	int j;
+	for(int i = 4; i<strlen(mdata->rebuf); i++)
+	{
+		if(mdata->rebuf[i] == '\n')
+		{		  
+			break;
+		}        
+		else
+		{
+			filename[j++] = mdata->rebuf[i];
+		}        
+	}  
 
-// int ftp_put_get(char *para, data *mdata){
-//   // printf("this is ftp_put_get\n");
+	strcat(filepath, mdata->current_path);
+	//strcat(filepath, "/");
+	strcat(filepath, filename);
 
-//   //向客户端传送文件
-//   init();
-//   char send[SENDFILESIZE];
-//   int filefd;
-//   int sendsize, len;
-//   char filepath[MAXLINE];
-//   int sockfd;
-//   char *current_path = mdata->current_path;
-//   strcat(filepath, current_path);
-//   strcat(filepath, "/");
-//   strcat(filepath, para);
-
-//   // printf("serverfilepath = %s\n", filepath);
-
-//   sockfd = mdata->fd;
-
-//   if( (filefd = open(filepath, O_RDONLY)) == -1){
-//     int flag = -1;
-//     memcpy(mdata->rebuf, &flag, sizeof(int));
-//     strcat(mdata->rebuf, "not exist this file\n");
-//     mdata->size = sizeof(int) + strlen("not exist this file\n");
-//     // printf("mdata->rebuf = %s\n", mdata->rebuf);
-
-//     return 1;
-//   }
-//   // printf("open file success\n");
-
-//   //准备传输数据
-//   while( (sendsize = read(filefd, (send+2*sizeof(int)), (SENDFILESIZE-2*sizeof(int)))) > 0){
-
-//     // printf("sendsize = %d\n", sendsize);
-
-//     //头标志，告知这是正常数据
-//     int flag = 1;
-//     memcpy(send, &flag, sizeof(int));
-//     memcpy(send+sizeof(int), &sendsize, sizeof(int));
-//     if( (write(sockfd, send, SENDFILESIZE)) < 0){
-//       close(filefd);
-//       return err("put file error\n");
-//     }
-//     memset(send, 0, sizeof(send));
-//   }
-
-//   return 0;
-// }
-
- 
+	if( (filefd = open(filepath, O_RDONLY)) == -1)
+	{
+		// int flag = -1;
+		// memcpy(mdata->rebuf, &flag, sizeof(int));
+		// strcat(mdata->rebuf, "not exist this file\n");
+		// mdata->size = sizeof(int) + strlen("not exist this file\n");
+		return 1;
+	}
+	//准备传输数据
+	while( (sendsize = read(filefd, (send), (FILEBUFSIZE))) > 0)
+	{
+		if( (write(mdata->fd, send, FILEBUFSIZE)) < 0)
+		{
+			close(filefd);
+			return err("put file error\n");
+		}
+		memset(send, 0, sizeof(send));
+	}
+	return 0;
+}
 
 void ls_do(data *mdata)
-
 {
-
-  // printf("this is ls\n");
-  char *current_path = mdata->current_path;
-  // printf("current_path = %s\n", current_path);
-
-  memset(re, 0, sizeof(re));
-  // int num = 0;
-  if( (dp = opendir(current_path)) != NULL){
-    while( (entry = readdir(dp)) != NULL){
-      // printf("readdir\n");
-      if( (strcmp(entry->d_name, ".") == 0) || \
-        (strcmp(entry->d_name, "..") == 0) )
-        continue;
-      // num++;
-      // printf("entry->d_name = \"%s\"\n", entry->d_name);
-      strcat(re, entry->d_name);
-      strcat(re, "\t");
-    }
-    // if(num)
-      strcat(re, "\n");
-  }
-  strcpy(mdata->rebuf, re);
-  mdata->size = strlen(re);
+	char *current_path = mdata->current_path;
+	memset(re, 0, sizeof(re));
+	if( (dp = opendir(current_path)) != NULL){
+		while( (entry = readdir(dp)) != NULL){
+		if( (strcmp(entry->d_name, ".") == 0) || \
+			(strcmp(entry->d_name, "..") == 0) )
+			continue;
+		strcat(re, entry->d_name);
+		strcat(re, "\t");
+		}
+		strcat(re, "\n");
+	}
+	strcpy(mdata->rebuf, re);
+	mdata->size = strlen(re);
 }

@@ -9,7 +9,7 @@
 #include <sys/time.h>
 #include <poll.h>
 #include <errno.h>
-#include <sys/stropts.h>
+
 #include <sys/epoll.h>
 #include <pthread.h>
 #include <sys/wait.h>

@@ -24,7 +24,7 @@
                 }
             ],
             "preLaunchTask": "gcc build active file",
-            "postDebugTask": "delete output file",
+            //"postDebugTask": "delete output file",
             "miDebuggerPath": "/usr/bin/gdb"
         }
     ]

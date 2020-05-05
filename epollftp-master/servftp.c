@@ -90,7 +90,8 @@ int ftp_put_cd(char *para, data *mdata){
         if(current_path[i] == '/')
           break;
       }
-      for(int j=0; j<i; j++)
+      int j=0; 
+      for(j=0; j<i; j++)
         temp[j] = current_path[j];
 
       strcpy(current_path, temp);
@@ -126,7 +127,7 @@ int ftp_put_cd(char *para, data *mdata){
   return 1;
 }
 
-int ftp_put_put(char *para, data *mdata){
+int ftp_put_put(data *mdata){
   int sockfd = mdata->fd;
   char *current_path =  mdata->current_path;
   //接收客户端传来的文件
@@ -135,10 +136,10 @@ int ftp_put_put(char *para, data *mdata){
   char filepath[MAXLINE];
   int filefd;
   int filesize;
-
-  for(int i=strlen(para)-1; i>=0; i--){
+  int i, j;
+  for(i=strlen(para)-1; i>=0; i--){
     if(para[i] == '/'){
-      for(int j=0; i<strlen(para); j++)
+      for(j=0; i<strlen(para); j++)
         filename[j] = para[++i];
       break;
     }

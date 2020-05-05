@@ -37,30 +37,21 @@ char *getCurrentDir(char *argv)
     }
     return s;
 }
-char para[MAXLINE];
-char *get_para(char *buf, int n){
-  memset(para, 0, sizeof(para));
-  int j=0;
-  for(int i=n; i<strlen(buf); i++)
-  {
-      if(buf[i] =='\n')
-        break;
-      else
-        para[j++] = buf[i];
-  }    
-  para[j] = '\0';
-  return para;
-}
-int servjudge(data *mdata)
-{
-    int connfd = mdata->fd;
-    if((strncmp(mdata->cmd, "ls", 2)) == 0)
-        ls_do(mdata);
-    else if((strncmp(mdata->cmd, "put ", 4)) == 0)
-        ftp_put_put(get_para(mdata->cmd, 4), mdata);
-    return 1;
-}
 
+// char *get_para(char *buf, int n){
+//     char para[MAXLINE];
+//   memset(para, 0, sizeof(para));
+//   int j=0;
+//   for(int i=n; i<strlen(buf); i++)
+//   {
+//       if(buf[i] =='\n')
+//         break;
+//       else
+//         para[j++] = buf[i];
+//   }    
+//   para[j] = '\0';
+//   return para;
+// }
 
 int main(int argc, char *argv[])
 {
@@ -69,7 +60,7 @@ int main(int argc, char *argv[])
     struct sockaddr_in serv_addr,clnt_addr;
     socklen_t adr_size;
     int str_len, i, j, index, n, nread, data_size, nwrite;
-    char buf[BUF_SIZE];
+    char BUFFER[BUF_SIZE];
 
     struct epoll_event *ep_events;
     struct epoll_event event, events[EPOLL_SIZE];
@@ -85,7 +76,7 @@ int main(int argc, char *argv[])
     memset(&serv_addr,0,sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    serv_addr.sin_port = htons(atoi(argv[1]));
+    serv_addr.sin_port = htons(atoi("9000"));
 
     if(bind(servfd,(struct sockaddr*)&serv_addr,sizeof(serv_addr)) == -1)
         error_handling("bind error");
@@ -107,7 +98,7 @@ int main(int argc, char *argv[])
     event.data.fd=servfd;
     epoll_ctl(epfd,EPOLL_CTL_ADD,servfd,&event);
 
-
+    puts("server start----|||----||||");
    while(1)
     {
         event_cnt = epoll_wait(epfd,ep_events,EPOLL_SIZE,-1);
@@ -147,7 +138,7 @@ int main(int argc, char *argv[])
             {
                 while(1)
                 {
-                    str_len = read(ep_events[i].data.fd, buf, BUF_SIZE);
+                    str_len = read(ep_events[i].data.fd, BUFFER, BUF_SIZE);
                     if(str_len == 0)
                     {
                         epoll_ctl(epfd, EPOLL_CTL_DEL, ep_events[i].data.fd, NULL);
@@ -162,17 +153,22 @@ int main(int argc, char *argv[])
                     }   
                     else
                     {
-                        if((strncmp(buf, "ls", 2)) == 0)//ls
+                        if((strncmp(BUFFER, "ls", 2)) == 0)//ls
                         {
-
                             ls_do(mdata);
-                            strcpy(buf, &(mdata[j].rebuf));
-                            write(ep_events[i].data.fd, buf, sizeof(buf));
+                            strcpy(BUFFER, &(mdata[j].rebuf));
+                            write(ep_events[i].data.fd, BUFFER, sizeof(BUFFER));
                         }
-                        else if((strncmp(buf, "put ", 4)) == 0)//put
+                        else if((strncmp(BUFFER, "put ", 4)) == 0)//put
                         {
-                            ftp_put_put(get_para(buf, 4), &mdata[j]);
+                            strcpy(&(mdata[j].rebuf), BUFFER);
+                            put_do(&mdata[j]);
                         }
+                        else if((strncmp(BUFFER, "get ", 4)) == 0)//put
+                        {
+                            strcpy(&(mdata[j].rebuf), BUFFER);
+                            get_do(&mdata[j]);
+                        }                        
                         
                     }
                                      
@@ -182,9 +178,7 @@ int main(int argc, char *argv[])
             }
             
         }
-    }
-
-    
+    }    
     close(servfd);
     close(epfd);
     return 0;

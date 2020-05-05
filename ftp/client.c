@@ -29,8 +29,8 @@ int main(int argc,char **argv[])
     memset(&clntaddr,0,sizeof(clntaddr));
 
     clntaddr.sin_family = AF_INET;
-    clntaddr.sin_addr.s_addr = inet_addr(argv[1]);
-    clntaddr.sin_port = htons(atoi(argv[2]));
+    clntaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    clntaddr.sin_port = htons(atoi("9000"));
 
 	if(connect(clntfd, (struct sockaddr *)&clntaddr, sizeof(clntaddr)) == -1) {
 		error_handling("connect() error!");
@@ -45,8 +45,14 @@ int main(int argc,char **argv[])
 		if(!strcmp(message, "q\n") | !strcmp(message, "Q\n")) {
 			break;
 		}
-
-        if(message[0] == 'p'&& message[1] == 'u'&& message[2] == 't')
+        if((strncmp(message, "ls", 2)) == 0)
+        {
+            write(clntfd, "ls", 2);
+            str_len = read(clntfd, message, BUF_SIZE-1);
+            message[str_len] = 0;
+            printf("[ls]: %s \n", message);
+        }
+        else if((strncmp(message, "put ", 4)) == 0)
         {
             if(strlen(message) < 5)
             {
@@ -57,14 +63,21 @@ int main(int argc,char **argv[])
             {
                 ftp_get_put(clntfd, message);                      
             }
-            
-
         }
+        else if((strncmp(message, "get ", 4)) == 0)
+        {
+            if(strlen(message) < 5)
+            {
+                puts("client put error! Usage: get xxx.xxx");
+                break;
+            }
+            else
+            {
+                ftp_get_get(clntfd, message);                      
+            }
+        }        
 
-		// write(clntfd, message, strlen(message));
-		// str_len = read(clntfd, message, BUF_SIZE-1);
-		// message[str_len] = 0;
-		// printf("Message from server: %s \n", message);
+
 	}
 
     close(clntfd);

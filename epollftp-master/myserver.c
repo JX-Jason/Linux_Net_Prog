@@ -58,7 +58,7 @@ int main(int argc, char const *argv[]) {
             continue;
 
           //初始化当前工作目录
-          strcpy(mdata[j].current_path, "/home/b/Desktop/ftp");
+          strcpy(mdata[j].current_path, "/home/acewzj/Linux_Net_Prog/ftp");
           mdata[j].indeep = 0;
           mdata[j].inuse = TRUE;
           mdata[j].fd = connfd;
