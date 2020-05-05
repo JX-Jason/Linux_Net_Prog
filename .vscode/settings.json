@@ -7,7 +7,9 @@
         "istream": "c",
         "limits": "c",
         "sstream": "c",
-        "streambuf": "c"
+        "streambuf": "c",
+        "my_judge.h": "c",
+        "ftp.h": "c"
     },
     "C_Cpp.errorSquiggles": "Enabled",
     "typescript.tsserver.experimental.enableProjectDiagnostics": true

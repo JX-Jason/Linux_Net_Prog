@@ -55,9 +55,7 @@ int main(int argc,char **argv[])
             }
             else
             {
-                char filename[strlen(message) - 5]; 
-                strncpy(filename, message + 4, strlen(message) - 5);  
-                ftp_get_put(clntfd, filename);                      
+                ftp_get_put(clntfd, message);                      
             }
             
 

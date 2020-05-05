@@ -1,8 +1,7 @@
 #define CMDSIZE 1024
-#define MAXLINE 1024
-#define TRUE 1
-#define FALSE 0
-typedef struct{
+#define MAXLINE 10240
+
+typedef struct Data{
   //是否要做成循环结构，那种非阻塞类型的
   int fd;
   char cmd[CMDSIZE];
@@ -12,5 +11,3 @@ typedef struct{
   char current_path[MAXLINE];
   int indeep;
 }data;
-
-

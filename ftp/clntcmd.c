@@ -1,26 +1,39 @@
 #include "clntcmd.h"
 #include <fcntl.h>
+#include "data.h"
+char para[MAXLINE];
+//返回需要参数的命令的参数
+//如 cd ， get ， put
+char *get_para(char *buf, int n){
+  memset(para, 0, sizeof(para));
+  int j=0;
+  for(int i=n; i<strlen(buf) - 1 ; i++)
+    para[j++] = buf[i];
+  para[j] = '\0';
+  return para;
+}
 //上传文件
 int ftp_get_put(int sockfd, char *cmd)
 {
   char send[SENDFILESIZE];
   int filefd;
   int sendsize;
-  if( (filefd = open(cmd, O_RDONLY)) == -1)
+  
+  if( (filefd = open(get_para(cmd, 4), O_RDONLY)) == -1)
     return err("ftp_get_put open error\n");
 
-  puts("open file success\n");
+  puts("open file success!");
 
   //告诉服务器准备接受数据
   if( (write(sockfd, cmd, strlen(cmd))) < 0)
     return err("ftp_get_put write error\n");
 
-  // printf("ready to send file\n");
+  puts("ready to send file\n");
 
   //准备传输数据
   while( (sendsize = read(filefd, (send+sizeof(int)), (SENDFILESIZE-sizeof(int)))) > 0){
 
-    // printf("sendsize = %d\n", sendsize);
+    printf("sendsize = %d\n", sendsize);
 
     memcpy(send, &sendsize, sizeof(int));
     if( (write(sockfd, send, SENDFILESIZE)) < 0){
