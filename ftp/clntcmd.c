@@ -13,20 +13,20 @@ char *get_para(char *buf, int n){
   return para;
 }
 //上传文件
-int ftp_get_put(int sockfd, char *cmd)
+int put_clnt(int sockfd, char *cmd)
 {
   char send[FILEBUFSIZE];
   int filefd;
   int sendsize;
   char returnbuf[10];
   if( (filefd = open(get_para(cmd, 4), O_RDONLY)) == -1)
-    return err("ftp_get_put open error\n");
+    return err("put_clnt open error\n");
 
   puts("open file success!");
 
   //告诉服务器准备接受数据
   if( (write(sockfd, cmd, strlen(cmd))) < 0)
-    return err("ftp_get_put write error\n");
+    return err("put_clnt write error\n");
 
   puts("ready to send file\n");
 
@@ -45,38 +45,44 @@ int ftp_get_put(int sockfd, char *cmd)
 }
 
 
-int ftp_get_get(int sockfd, char *cmd)
+int get_clnt(int sockfd, char *cmd)
 {
   char *filename = get_para(cmd, 4);
   char recv[FILEBUFSIZE];
   char filepath[MAXLINE];
   int filesize;
-  int filefd, flag;
+  int filefd;
   char recv_path[MAXLINE] = "./recvftp";
   //当前目录下还没有创建recv_path这个文件夹
+  // int flag = fcntl(sockfd, F_GETFL, 0);
+  // fcntl(sockfd,F_SETFL, flag|O_NONBLOCK);
   if(!opendir(recv_path))
     mkdir("recvftp", 0777);
-
+  memset(filepath, 0, sizeof(filepath));
+  //strcat(filepath, recv_path);
   strcat(filepath, recv_path);
   strcat(filepath, "/");
   strcat(filepath, filename);
 
   if(write(sockfd, cmd, strlen(cmd)) < 0)
-    return err("ftp_get_get write error\n");
+    return err("get_clnt write error\n");
 
   if( (filefd = open(filepath, O_WRONLY|O_CREAT|O_TRUNC, 0777)) < 0)
   {
-    return err("ftp_get_get open file error\n");
+    return err("get_clnt open file error\n");
   }
   int num;
-  while( (num = (read(sockfd, recv, MAXLINE))) >= 0)
+  while( (num = (read(sockfd, recv, MAXLINE))) > 0)
   {
       printf("read num : %d \n", num);
-        if( (write(filefd, recv, num)) < 0)
-        {
-          close(filefd);
-          return err("ftp_get_get write to file error\n");
-        }
+      if( (write(filefd, recv, num)) < 0)
+      {
+        close(filefd);
+        return err("get_clnt write to file error\n");
+      }
+      if(num < MAXLINE - 1)
+        break;
+      memset(recv, 0, sizeof(recv));
   }        
   printf("file received success\n");
   return 0;

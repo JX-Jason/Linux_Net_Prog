@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
     event.data.fd=servfd;
     epoll_ctl(epfd,EPOLL_CTL_ADD,servfd,&event);
 
-    puts("server start----|||----||||");
+    puts("server start----");
    while(1)
     {
         event_cnt = epoll_wait(epfd,ep_events,EPOLL_SIZE,-1);
@@ -155,19 +155,19 @@ int main(int argc, char *argv[])
                     {
                         if((strncmp(BUFFER, "ls", 2)) == 0)//ls
                         {
-                            ls_do(mdata);
+                            ls_serv(&mdata[j]);
                             strcpy(BUFFER, &(mdata[j].rebuf));
                             write(ep_events[i].data.fd, BUFFER, sizeof(BUFFER));
                         }
                         else if((strncmp(BUFFER, "put ", 4)) == 0)//put
                         {
                             strcpy(&(mdata[j].rebuf), BUFFER);
-                            put_do(&mdata[j]);
+                            put_serv(&mdata[j]);
                         }
-                        else if((strncmp(BUFFER, "get ", 4)) == 0)//put
+                        else if((strncmp(BUFFER, "get ", 4)) == 0)//get
                         {
                             strcpy(&(mdata[j].rebuf), BUFFER);
-                            get_do(&mdata[j]);
+                            get_serv(&mdata[j]);
                         }                        
                         
                     }

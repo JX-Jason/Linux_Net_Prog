@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/acewzj/Linux_Net_Prog/muduo-master/muduo/base/Date.h
+muduo/base/copyable.h
+/home/acewzj/Linux_Net_Prog/muduo-master/muduo/base/muduo/base/copyable.h
+muduo/base/Types.h
+/home/acewzj/Linux_Net_Prog/muduo-master/muduo/base/muduo/base/Types.h
+
+/home/acewzj/Linux_Net_Prog/muduo-master/muduo/base/Types.h
+stdint.h
+-
+string.h
+-
+string
+-
+assert.h
+-
+
+/home/acewzj/Linux_Net_Prog/muduo-master/muduo/base/copyable.h
+
+/home/acewzj/Linux_Net_Prog/muduo-master/muduo/base/tests/Date_unittest.cc
+muduo/base/Date.h
+/home/acewzj/Linux_Net_Prog/muduo-master/muduo/base/tests/muduo/base/Date.h
+assert.h
+-
+stdio.h
+-
+

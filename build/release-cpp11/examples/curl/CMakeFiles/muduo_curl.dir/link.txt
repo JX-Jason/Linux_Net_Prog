@@ -1,0 +1,2 @@
+/bin/ar cr ../../lib/libmuduo_curl.a  CMakeFiles/muduo_curl.dir/Curl.cc.o
+/bin/ranlib ../../lib/libmuduo_curl.a

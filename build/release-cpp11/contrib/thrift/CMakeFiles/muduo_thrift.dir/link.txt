@@ -1,0 +1,2 @@
+/bin/ar cr ../../lib/libmuduo_thrift.a  CMakeFiles/muduo_thrift.dir/ThriftConnection.cc.o CMakeFiles/muduo_thrift.dir/ThriftServer.cc.o
+/bin/ranlib ../../lib/libmuduo_thrift.a
