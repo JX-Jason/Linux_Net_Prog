@@ -162,11 +162,12 @@ int main(int argc, char *argv[])
                         else if((strncmp(BUFFER, "put ", 4)) == 0)//put
                         {
                             strcpy(&(mdata[j].rebuf), BUFFER);
+                            mdata[j].size = str_len; 
                             put_serv(&mdata[j]);
                         }
                         else if((strncmp(BUFFER, "get ", 4)) == 0)//get
                         {
-                            strcpy(&(mdata[j].rebuf), BUFFER);
+                            strcpy(&(mdata[j].rebuf), BUFFER);                                                      
                             get_serv(&mdata[j]);
                         }                        
                         
