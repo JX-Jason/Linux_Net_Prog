@@ -33,6 +33,7 @@ int put_clnt(int sockfd, char *cmd)
   //准备传输数据
   while( (sendsize = read(filefd, send, FILEBUFSIZE)) > 0){
     //memcpy(send, &sendsize, sizeof(int));
+    printf("sendsize = %d \n", sendsize);
     if( (write(sockfd, send, FILEBUFSIZE)) < 0){
       close(filefd);
       return err("put file error\n");

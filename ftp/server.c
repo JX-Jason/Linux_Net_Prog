@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
                 while(1)
                 {
                     str_len = read(ep_events[i].data.fd, BUFFER, BUF_SIZE);
-                    if(str_len == 0)
+                    if(str_len == 0)//缓冲区读出来为0， 证明客户端已关闭连接
                     {
                         epoll_ctl(epfd, EPOLL_CTL_DEL, ep_events[i].data.fd, NULL);
                         close(ep_events[i].data.fd);
@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
                     }
                     else if(str_len < 0)
                     {
-                        if(errno == EAGAIN)
+                        if(errno == EAGAIN)//读取完了缓冲区内的所有数据
                             break;
                     }   
                     else

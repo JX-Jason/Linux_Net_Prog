@@ -3,74 +3,14 @@
 #include<fcntl.h>
 #include<dirent.h>
 #include<string.h>
-
+#include <errno.h>
 #define FILEBUFSIZE 1024
 
 char re[MAXLINE];
 DIR *dp;
 struct dirent *entry;
 int n;
-
-
-// int ftp_put_cd(char *para, data *mdata){
-
-//   printf("para = %s\n", para);
-//   char *current_path = mdata->current_path;
-//   char temp[MAXLINE];
-//   int flag = 0;
-//   int indeep = mdata->indeep;
-//   // if( (strcmp(para, ".")) == 0)
-//   //   return 0;
-//   if( (strcmp(para, "..")) == 0){
-//     printf("int strcmp\n");
-//     printf("indeep = %d\n", indeep);
-//     if(indeep != 0){
-
-//       // printf("deal\n");
-
-//       indeep--;
-//       memset(temp, 0, sizeof(temp));
-//       int i = strlen(current_path)-1;
-//       for(; i>=0; i--){
-//         if(current_path[i] == '/')
-//           break;
-//       }
-//       for(int j=0; j<i; j++)
-//         temp[j] = current_path[j];
-
-//       strcpy(current_path, temp);
-//     }
-//   }
-//   else{
-//     indeep++;
-//     //判断para这个文件夹存不存在
-//     dp = opendir(current_path);
-//     while( (entry = readdir(dp)) != NULL){
-//       if( (strcmp(entry->d_name, para) == 0) && (entry->d_type & DT_DIR)){
-//         flag = 1;
-//         break;
-//       }
-//     }
-//     if(flag){
-//       strcat(current_path, "/");
-//       strcat(current_path, para);
-//     }
-//     else{
-//       //当前目录没有这个文件
-//       int num = -1;
-//       memcpy(mdata->rebuf, &num, sizeof(int));
-//       strcat(mdata->rebuf, "no such file or file not a dir\n");
-//       mdata->size = strlen("no such file or file not a dir\n") + sizeof(int);
-//       return 1;
-//     }
-//   }
-//   printf("%s\n", current_path);
-//   int num = 1;
-//   memcpy(mdata->rebuf, &num, sizeof(int));
-//   mdata->indeep = indeep;
-//   return 1;
-// }
-  //接收客户端传来的文件
+//接收客户端传来的文件
 int put_serv(data *mdata)
 {
 	char filename[MAXLINE];
@@ -104,18 +44,22 @@ int put_serv(data *mdata)
 	}
 	else
 	{
-		write(filefd, (mdata->rebuf) + i + 1, FILEBUFSIZE - i - 1);
-		
-		while ((read_num = read(mdata->fd, mdata->rebuf, FILEBUFSIZE)) >= 0)
+		while (1)
 		{
+			read_num = read(mdata->fd, mdata->rebuf, FILEBUFSIZE);
 			printf("read_num : %d \n", read_num);
+			if(read_num < 0 && errno == EAGAIN)
+			{
+				break;
+			}
 			if( (write(filefd, mdata->rebuf, read_num)) < 0)
 			{
 				close(filefd);
 				return err("put_serv write to file error\n");
 			}
-			memset(mdata->rebuf, 0, sizeof(mdata->rebuf));
-		} 
+			memset(mdata->rebuf, 0, sizeof(mdata->rebuf));	
+		}
+		
 	}
 	close(filefd);
 	return 1;
@@ -145,7 +89,6 @@ int get_serv(data *mdata)
 	}  
 
 	strcat(filepath, mdata->current_path);
-	//strcat(filepath, "/");
 	strcat(filepath, filename);
 
 	if( (filefd = open(filepath, O_RDONLY)) == -1)
