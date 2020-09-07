@@ -3,9 +3,9 @@ all: client server
 obj_serv = server_main.c
 obj_clnt = client_main.c
 server:$(obj_serv)
-	gcc -o server_main $(obj_serv) -g
+	gcc -o server $(obj_serv) -g
 client:$(obj_clnt)
-	gcc -o client_main $(obj_clnt) -g
+	gcc -o client $(obj_clnt) -g
 
 .PHONY:clean
 clean:

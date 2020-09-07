@@ -53,12 +53,12 @@ int get_clnt(int sockfd, char *cmd)
   char filepath[MAXLINE];
   int filesize;
   int filefd;
-  char recv_path[MAXLINE] = "./recvftp";
+  char recv_path[MAXLINE] = "./clntRecv";
   //当前目录下还没有创建recv_path这个文件夹
   // int flag = fcntl(sockfd, F_GETFL, 0);
   // fcntl(sockfd,F_SETFL, flag|O_NONBLOCK);
   if(!opendir(recv_path))
-    mkdir("recvftp", 0777);
+    mkdir("clntRecv", 0777);
   memset(filepath, 0, sizeof(filepath));
   //strcat(filepath, recv_path);
   strcat(filepath, recv_path);
