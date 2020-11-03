@@ -1,7 +1,7 @@
 all: client serverLT serverET
 .PHONY:all
-obj_serv_LT = servLT.c
-obj_serv_ET = servET.c
+obj_serv_LT = serverLT.c
+obj_serv_ET = serverET.c
 obj_clnt = clnt.c
 serverLT:$(obj_serv)
 	gcc -o serverLT $(obj_serv_LT) -g -std=c99

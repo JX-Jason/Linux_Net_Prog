@@ -59,14 +59,14 @@ int main(int argc, char *argv[])
 
     while(1)
     {
-        event_cnt = epoll_wait(epfd,ep_events,EPOLL_SIZE,-1);
+        event_cnt = epoll_wait(epfd,ep_events,EPOLL_SIZE,-1);//进程会阻塞在这里
         if(event_cnt == -1)
         {
-            puts("epoll_wait() error");
-            break;
+            printf("%s\n", strerror(errno));            
+            //break;
         }
         puts("return epoll_wait");
-        for(int i = 0; i<event_cnt; i++)
+        for(int i = 0; i<event_cnt; i++)//新的事件反映在event_cnt
         {
             if(ep_events[i].data.fd == servfd)//this fd occur something
             {
@@ -83,9 +83,9 @@ int main(int argc, char *argv[])
                 while(1)
                 {
                     str_len = read(ep_events[i].data.fd, buf, BUF_SIZE);
-                    if(str_len == 0)
+                    if(str_len == 0)//客户端不发东西了
                     {
-                        epoll_ctl(epfd, EPOLL_CTL_DEL, ep_events[i].data.fd, NULL);
+                        epoll_ctl(epfd, EPOLL_CTL_DEL, ep_events[i].data.fd, NULL);//删掉这个socket
                         close(ep_events[i].data.fd);
                         printf("close client:%d \n",ep_events[i].data.fd);
                         break;
