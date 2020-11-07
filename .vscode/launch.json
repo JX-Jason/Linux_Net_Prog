@@ -9,8 +9,8 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
-            "args": ["9000"],//server
-            //"args": ["127.0.0.1","9000"],//
+            //"args": ["9000"],//server
+            "args": ["127.0.0.1","9000"],//
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],

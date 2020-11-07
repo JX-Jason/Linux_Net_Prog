@@ -119,9 +119,9 @@ int main(int argc, char *argv[])
         fprintf(stderr,"usage: %s ip_address port\n",argv[0]);;
         exit(1);
     }
-    char* ip=argv[1];
+    //char* ip=argv[1];
     char* port=argv[2];
-//    char* ip="127.0.0.1";
+    char* ip="127.0.0.1";
 //    char* port="12345";
 
     int listenfd=open_listenfd(ip,port,LISTENQ);
