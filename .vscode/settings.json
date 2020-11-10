@@ -11,7 +11,8 @@
         "my_judge.h": "c",
         "ftp.h": "c",
         "functional": "cpp",
-        "mutex": "cpp"
+        "mutex": "cpp",
+        "thread": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled",
     "typescript.tsserver.experimental.enableProjectDiagnostics": true,
